@@ -1,2 +1,2 @@
 # DeepSCP
-DeepSP: A Deep Learning Framework for Spatial Proteomics
+DeepSCP: utilizing deep learning to boost single-cell proteome coverage
