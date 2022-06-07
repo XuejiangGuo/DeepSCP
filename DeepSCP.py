@@ -3,6 +3,7 @@
 # @Author   : wangbing
 # @FILE     : DeepSCP.py
 # @Time     : 9/20/2021 9:29 PM
+# @Desc     : DeepSCP: utilizing deep learning to boost single-cell proteome coverage
 
 
 import numpy as np
@@ -28,6 +29,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 import torch
 import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader
+import argparse
 import warnings
 warnings.filterwarnings('ignore')
 plt.rcParams['font.sans-serif'] = 'Arial'
@@ -728,5 +730,64 @@ def proteinfilter(data, protein_count=15, sample_ratio=0.5):
     return data
 
 
+def main(evidenve_file, msms_file, lbmsms_file):
+    print(' ###################SampleRT###################')
+    evidence = pd.read_csv(evidenve_file, sep='\t', low_memory=False)
+    sampleRT = MQ_SampleRT()
+    dfRT = sampleRT.fit_tranform(evidence)
+    del evidence
+    print('###################DeepSpec###################')
+    msms = pd.read_csv(lbmsms_file, sep='\t', low_memory=False)
+    lbmsms = pd.read_csv(msms_file, sep='\t', low_memory=False)
+    deepspec = DeepSpec()
+    deepspec.fit(lbmsms)
+    dfSP = deepspec.predict(dfRT, msms)
+    del msms, lbmsms
+    print('###################LgbBayses###################')
+    dfdb = deepcopy(dfSP)
+    del dfSP
+    feature_columns = ['Length', 'Acetyl (Protein N-term)', 'Oxidation (M)', 'Missed cleavages',
+                       'Charge', 'm/z', 'Mass', 'Mass error [ppm]', 'Retention length', 'PEP',
+                       'MS/MS scan number', 'Score', 'Delta score', 'PIF', 'Intensity',
+                       'Retention time', 'RT(*|rev)', 'RT(*|tag)', 'DeltaRT', 'PEPRT', 'ScoreRT',
+                       'Cosine', 'PEPCosine', 'ScoreCosine']
+    target_column = 'label'
+    file_column = 'Experiment'
+    protein_column = 'Leading razor protein'
+    lgs = LgbBayes()
+    data_set = lgs.fit_tranform(data=dfdb,
+                                feature_columns=feature_columns,
+                                target_column=target_column,
+                                file_column=file_column,
+                                protein_column=protein_column)
+    data_set.to_csv('DeepSCP_evidence.txt', sep='\t', index=False)
+
+
 if __name__ == '__main__':
-    pass
+    parser = argparse.ArgumentParser(
+        description="DeepSCP: utilizing deep learning to boost single-cell proteome coverage")
+    parser.add_argument("-e",
+                        "--evidence",
+                        dest='e',
+                        type=str,
+                        help="SCP SampleSet, evidence.txt, which recorde information about the identified peptides \
+                        by MaxQuant with setting  FDR to 1 at both PSM and protein levels")
+    parser.add_argument("-m",
+                        "--msms",
+                        dest='m',
+                        type=str,
+                        help="SCP SampleSet, msms.txt, which recorde fragment ion information about the identified peptides \
+                        by MaxQuant with setting  FDR to 1 at both PSM and protein levels")
+    parser.add_argument("-lbm",
+                        "--lbmsms",
+                        dest='lbm',
+                        type=str,
+                        help="LibrarySet, msms.txt, which recorde fragment ion information about the identified peptides \
+                        by MaxQuant with setting  FDR to 0.01 at both PSM and protein levels")
+    args = parser.parse_args()
+    evidenve_file = args.e
+    msms_file = args.m
+    lbmsms_file = args.lbm
+    t0 = time()
+    main(evidenve_file, msms_file, lbmsms_file)
+    print('DeepSCP using time: {} m {}s'.format(int((time() - t0) // 60), (time() - t0) % 60))
