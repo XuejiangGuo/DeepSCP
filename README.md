@@ -86,9 +86,9 @@ optional arguments:
 $ python DeepSCP.py -e evidence.txt -m msms.txt -lbm lbmsms.txt
 ```
 
-- Module mode
+- Step by step
 
-  example/demo/DeepSCP_example_(N2%20dataset).ipynb
+  example/demo/DeepSCP_example_(N2 dataset).ipynb
 
 ## References
 
