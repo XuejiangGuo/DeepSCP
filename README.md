@@ -45,7 +45,7 @@ copy
 time
 joblib
 bayes_opt
-triqler.qvality
+triqler
 sklean
 torch
 argparse
