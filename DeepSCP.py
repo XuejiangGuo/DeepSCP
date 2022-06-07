@@ -737,8 +737,8 @@ def main(evidenve_file, msms_file, lbmsms_file):
     dfRT = sampleRT.fit_tranform(evidence)
     del evidence
     print('###################DeepSpec###################')
-    msms = pd.read_csv(lbmsms_file, sep='\t', low_memory=False)
-    lbmsms = pd.read_csv(msms_file, sep='\t', low_memory=False)
+    msms = pd.read_csv(msms_file, sep='\t', low_memory=False)
+    lbmsms = pd.read_csv(lbmsms_file, sep='\t', low_memory=False)
     deepspec = DeepSpec()
     deepspec.fit(lbmsms)
     dfSP = deepspec.predict(dfRT, msms)
