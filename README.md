@@ -90,7 +90,12 @@ $ python DeepSCP.py -e evidence.txt -m msms.txt -lbm lbmsms.txt
 
   example/demo/DeepSCP_example_(N2 dataset).ipynb
 
+
 ## References
 
-Bing Wang, Yue Wang, Yu Chen, Mengmeng Gao, Jie Ren, Yueshuai Guo, Chenghao Situ, Yaling Qi, Hui Zhu, Yan Li, Xuejiang Guo, DeepSCP: utilizing deep learning to boost single-cell proteome coverage, *Briefings in Bioinformatics*, 2022;, bbac214, https://doi.org/10.1093/bib/bbac214
+Wang B, Wang Y, Chen Y, Gao M, Ren J, Guo Y, Situ C, Qi Y, Zhu H, Li Y, Guo X. DeepSCP: utilizing deep learning to boost single-cell proteome coverage. Brief Bioinform. 2022 Jul 18;23(4):bbac214. doi: 10.1093/bib/bbac214.
+
+
+If there are any problems, please contact me.
+Bing Wang, E-mail: wangbing587@163.com
 
