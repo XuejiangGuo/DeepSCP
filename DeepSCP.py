@@ -760,7 +760,21 @@ def main(evidenve_file, msms_file, lbmsms_file):
                                 target_column=target_column,
                                 file_column=file_column,
                                 protein_column=protein_column)
+    
+    data = data_set[(data_set.psm_qvalue < 0.01) & (data_set.protein_qvalue < 0.01) &
+                    (data_set.label == 1)]
+    
+    peptide_column = 'Sequence'
+    intensity_columns = [i for i in data.columns if 'Reporter intensity corrected' in i]
+
+    df_pro, df_pep = PSM2ProPep(data, file_column=file_column,
+                                protein_column=protein_column,
+                                peptide_column=peptide_column,
+                                intensity_columns=intensity_columns)
+
     data_set.to_csv('DeepSCP_evidence.txt', sep='\t', index=False)
+    df_pro.to_csv('DeepSCP_pro.csv')
+    df_pep.to_csv('DeepSCP_pep.csv', index=False)
 
 
 if __name__ == '__main__':
