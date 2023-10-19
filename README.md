@@ -46,7 +46,7 @@ time
 joblib
 bayes_opt
 triqler
-sklean
+scikit-learn
 torch
 argparse
 warnings
